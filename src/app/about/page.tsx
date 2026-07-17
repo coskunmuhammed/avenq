@@ -44,18 +44,18 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="w-full flex flex-col gap-28 md:gap-44 pb-24 pt-12 md:pt-16">
+    <div className="w-full flex flex-col gap-12 sm:gap-16 md:gap-36 pb-16 md:pb-24 pt-2 sm:pt-6 md:pt-16">
       {/* Section 1 — Hero */}
-      <section className="pt-8 md:pt-16">
-        <Container size="normal" className="flex flex-col gap-6">
+      <section className="pt-2 sm:pt-4 md:pt-8">
+        <Container size="normal" className="flex flex-col gap-4">
           <FadeIn>
             <Typography variant="mono" muted className="mb-2">
               THE AVENQ STORY
             </Typography>
-            <Typography variant="display" className="max-w-4xl tracking-[-0.035em]">
+            <Typography variant="display" className="max-w-4xl tracking-[-0.035em] text-3xl sm:text-5xl md:text-6xl">
               An Engineering Company.
             </Typography>
-            <Typography variant="lead" muted className="max-w-2xl text-xl md:text-2xl font-normal leading-relaxed mt-2">
+            <Typography variant="lead" muted className="max-w-2xl text-lg sm:text-xl md:text-2xl font-normal leading-relaxed mt-2">
               Built around products. Designed for longevity.
             </Typography>
           </FadeIn>
@@ -63,17 +63,17 @@ export default function AboutPage() {
       </section>
 
       {/* Section 2 — Why We Exist */}
-      <section className="py-24 border-y border-[var(--border-subtle)] bg-[#141414]">
+      <section className="py-12 md:py-24 border-y border-[var(--border-subtle)] bg-[#141414]">
         <Container size="narrow">
           <FadeIn>
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-6 md:gap-8">
               <Typography variant="mono" muted>
                 FOUNDATIONAL PURPOSE
               </Typography>
-              <Typography variant="h2" className="text-3xl md:text-5xl tracking-tight">
+              <Typography variant="h2" className="text-2xl sm:text-4xl md:text-5xl tracking-tight">
                 Why We Exist
               </Typography>
-              <div className="flex flex-col gap-4 text-xl md:text-3xl font-semibold tracking-tight leading-snug">
+              <div className="flex flex-col gap-3 md:gap-4 text-lg sm:text-2xl md:text-3xl font-semibold tracking-tight leading-snug">
                 <p className="text-[var(--text-primary)]">We don't sell hours.</p>
                 <p className="text-[var(--text-primary)]">We build products.</p>
                 <p className="text-[var(--text-secondary)] font-normal">Products demand discipline.</p>
@@ -85,23 +85,23 @@ export default function AboutPage() {
       </section>
 
       {/* Section 3 — Ecosystem Snapshot */}
-      <section className="py-24 border-y border-[var(--border-subtle)] bg-[#141414]">
-        <Container size="normal" className="flex flex-col gap-12">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
+      <section className="py-12 md:py-24 border-y border-[var(--border-subtle)] bg-[#141414]">
+        <Container size="normal" className="flex flex-col gap-8 md:gap-12">
+          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-4 md:pb-6">
             <Typography variant="mono" muted>
               STRUCTURE
             </Typography>
-            <Typography variant="h2">Ecosystem Snapshot</Typography>
+            <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">Ecosystem Snapshot</Typography>
           </div>
 
-          <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {snapshotCategories.map((cat, idx) => (
               <StaggerItem key={idx}>
-                <div className="p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#0B0B0B] flex flex-col justify-between h-32">
+                <div className="p-5 sm:p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#0B0B0B] flex flex-col justify-between h-28 sm:h-32">
                   <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-widest uppercase">
                     {cat.tag}
                   </span>
-                  <h3 className="text-lg md:text-xl font-semibold text-[var(--text-primary)] tracking-tight">
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[var(--text-primary)] tracking-tight">
                     {cat.title}
                   </h3>
                 </div>
@@ -113,23 +113,23 @@ export default function AboutPage() {
 
       {/* Section 4 — What We Build */}
       <section>
-        <Container size="normal" className="flex flex-col gap-12">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
+        <Container size="normal" className="flex flex-col gap-8 md:gap-12">
+          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-4 md:pb-6">
             <Typography variant="mono" muted>
               CAPABILITIES
             </Typography>
-            <Typography variant="h2">What We Build</Typography>
+            <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">What We Build</Typography>
           </div>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {whatWeBuild.map((item, idx) => (
               <StaggerItem key={idx}>
-                <div className="p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] flex flex-col justify-between gap-4 h-full">
+                <div className="p-5 sm:p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] flex flex-col justify-between gap-3 sm:gap-4 h-full">
                   <div className="flex flex-col gap-2">
                     <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-widest">
                       0{idx + 1}
                     </span>
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] tracking-tight">
+                    <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)] tracking-tight">
                       {item.title}
                     </h3>
                     <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
@@ -144,22 +144,22 @@ export default function AboutPage() {
       </section>
 
       {/* Section 5 — Principles */}
-      <section className="py-24 border-y border-[var(--border-subtle)] bg-[#141414]">
-        <Container size="normal" className="flex flex-col gap-12">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
+      <section className="py-12 md:py-24 border-y border-[var(--border-subtle)] bg-[#141414]">
+        <Container size="normal" className="flex flex-col gap-8 md:gap-12">
+          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-4 md:pb-6">
             <Typography variant="mono" muted>
               CULTURE
             </Typography>
-            <Typography variant="h2">Permanent Principles</Typography>
+            <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">Permanent Principles</Typography>
           </div>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 md:gap-y-16">
             {principles.map((p) => (
-              <StaggerItem key={p.number} className="flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-6">
-                <span className="font-mono text-xs text-[var(--text-tertiary)] tracking-widest uppercase">
+              <StaggerItem key={p.number} className="flex flex-col gap-2 sm:gap-3 border-t border-[var(--border-subtle)] pt-4 sm:pt-6">
+                <span className="font-mono text-[10px] sm:text-xs text-[var(--text-tertiary)] tracking-widest uppercase">
                   PRINCIPLE // {p.number}
                 </span>
-                <div className="flex flex-col text-2xl md:text-3xl font-semibold tracking-tight leading-snug">
+                <div className="flex flex-col text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight leading-snug">
                   <span className="text-[var(--text-primary)]">{p.headline}</span>
                   <span className="text-[var(--text-secondary)] font-normal">{p.subline}</span>
                 </div>
@@ -173,14 +173,14 @@ export default function AboutPage() {
       <section>
         <Container size="narrow">
           <FadeIn>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 sm:gap-6">
               <Typography variant="mono" muted>
                 HORIZON
               </Typography>
-              <Typography variant="h2" className="text-3xl md:text-5xl tracking-tight font-semibold">
+              <Typography variant="h2" className="text-2xl sm:text-4xl md:text-5xl tracking-tight font-semibold">
                 Looking Forward.
               </Typography>
-              <div className="flex flex-col gap-3 text-xl md:text-2xl text-[var(--text-secondary)] font-medium leading-snug">
+              <div className="flex flex-col gap-2.5 sm:gap-3 text-base sm:text-xl md:text-2xl text-[var(--text-secondary)] font-medium leading-snug">
                 <p className="text-[var(--text-primary)]">We're still at the beginning.</p>
                 <p>Everything we build today becomes the foundation for what comes next.</p>
               </div>

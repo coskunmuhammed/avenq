@@ -87,7 +87,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col selection:bg-white selection:text-black">
         <Navbar />
-        <main className="flex-grow pt-20 md:pt-28">{children}</main>
+        <main className="flex-grow pt-16 sm:pt-20 md:pt-28">{children}</main>
         <Footer />
       </body>
     </html>
