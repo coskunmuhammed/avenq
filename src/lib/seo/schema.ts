@@ -1,5 +1,5 @@
 /**
- * SEO & Structured Data (JSON-LD) Generators for AVENQ
+ * SEO & Structured Data (JSON-LD) Generators for AVENQ Ecosystem
  */
 
 export function generateOrganizationSchema() {
@@ -9,17 +9,19 @@ export function generateOrganizationSchema() {
     name: 'AVENQ',
     url: 'https://avenq.pro',
     logo: 'https://avenq.pro/brand/avenq-mark.png',
-    description: 'AVENQ is a technology company building digital products, AI solutions, cloud infrastructure, and software platforms.',
+    description: 'AVENQ is a technology company building digital products, AI systems, cloud infrastructure, and software platforms.',
     foundingLocation: {
       '@type': 'Place',
       name: 'Istanbul, Türkiye',
     },
-    slogan: 'Building Digital Businesses.',
+    slogan: 'Software built to endure.',
     knowsAbout: [
       'Software Engineering',
       'Artificial Intelligence',
       'Cloud Infrastructure',
       'Enterprise Operating Systems',
+      'Real Estate Technology',
+      'Hospitality Software',
     ],
   };
 }

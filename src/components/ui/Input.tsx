@@ -20,14 +20,14 @@ export const Input: React.FC<InputProps> = ({
       {label && (
         <label
           htmlFor={inputId}
-          className="text-xs font-mono uppercase tracking-widest text-[var(--text-secondary)]"
+          className="text-xs font-mono uppercase tracking-widest text-[var(--text-secondary)] select-none"
         >
           {label}
         </label>
       )}
       <input
         id={inputId}
-        className={`w-full h-12 px-4 bg-[rgba(255,255,255,0.02)] border border-[var(--border-subtle)] rounded-[4px] text-[var(--text-primary)] text-sm transition-colors duration-200 focus:border-[var(--text-primary)] focus:bg-[rgba(255,255,255,0.04)] focus:outline-none placeholder:text-[var(--text-tertiary)] ${className}`}
+        className={`w-full h-12 px-4 bg-[rgba(255,255,255,0.02)] border border-[var(--border-subtle)] rounded-[4px] text-[var(--text-primary)] text-base md:text-sm transition-colors duration-200 focus:border-[var(--text-primary)] focus:bg-[rgba(255,255,255,0.04)] focus:outline-none placeholder:text-[var(--text-tertiary)] ${className}`}
         {...props}
       />
       {error && (
@@ -57,7 +57,7 @@ export const Textarea: React.FC<TextareaProps> = ({
       {label && (
         <label
           htmlFor={textareaId}
-          className="text-xs font-mono uppercase tracking-widest text-[var(--text-secondary)]"
+          className="text-xs font-mono uppercase tracking-widest text-[var(--text-secondary)] select-none"
         >
           {label}
         </label>
@@ -65,7 +65,7 @@ export const Textarea: React.FC<TextareaProps> = ({
       <textarea
         id={textareaId}
         rows={5}
-        className={`w-full p-4 bg-[rgba(255,255,255,0.02)] border border-[var(--border-subtle)] rounded-[4px] text-[var(--text-primary)] text-sm transition-colors duration-200 focus:border-[var(--text-primary)] focus:bg-[rgba(255,255,255,0.04)] focus:outline-none placeholder:text-[var(--text-tertiary)] resize-y ${className}`}
+        className={`w-full p-4 bg-[rgba(255,255,255,0.02)] border border-[var(--border-subtle)] rounded-[4px] text-[var(--text-primary)] text-base md:text-sm transition-colors duration-200 focus:border-[var(--text-primary)] focus:bg-[rgba(255,255,255,0.04)] focus:outline-none placeholder:text-[var(--text-tertiary)] resize-y ${className}`}
         {...props}
       />
       {error && (

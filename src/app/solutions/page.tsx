@@ -2,11 +2,10 @@ import { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Typography } from '@/components/ui/Typography';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/Motion';
-import { CapabilityBlock } from '@/components/solution/CapabilityBlock';
 
 export const metadata: Metadata = {
-  title: 'Solutions',
-  description: 'AVENQ engineering capabilities: AI Systems, Software Engineering, Cloud Infrastructure, Automation, Digital Transformation, Cybersecurity, IT Operations.',
+  title: 'Engineering Capabilities',
+  description: 'AVENQ engineering capabilities across products, platforms, AI systems, and cloud infrastructure.',
   alternates: {
     canonical: 'https://avenq.pro/solutions',
   },
@@ -14,64 +13,29 @@ export const metadata: Metadata = {
 
 export default function SolutionsPage() {
   const capabilities = [
-    {
-      number: '01',
-      title: 'AI Solutions',
-      description: 'Practical artificial intelligence tools for text processing, data analysis, and workflow automation.',
-      outcomes: ['Language model integration', 'Document parsing', 'Workflow automation'],
-    },
-    {
-      number: '02',
-      title: 'Software Engineering',
-      description: 'Custom web application development, API design, and structured software architecture.',
-      outcomes: ['Web applications', 'Structured REST/GraphQL APIs', 'Modular codebases'],
-    },
-    {
-      number: '03',
-      title: 'Cloud Infrastructure',
-      description: 'Cloud deployment, containerized hosting, and server management.',
-      outcomes: ['Cloud server setup', 'Automated deployments', 'Uptime monitoring'],
-    },
-    {
-      number: '04',
-      title: 'Automation Systems',
-      description: 'Process automation, data synchronization pipelines, and system integrations.',
-      outcomes: ['Data pipelines', 'API integrations', 'Task automation'],
-    },
-    {
-      number: '05',
-      title: 'Digital Transformation',
-      description: 'Updating legacy software systems and migrating databases to modern cloud platforms.',
-      outcomes: ['Database migration', 'Monolith refactoring', 'UI modernization'],
-    },
-    {
-      number: '06',
-      title: 'Cybersecurity',
-      description: 'Security reviews, access control policies, data protection, and SSL/TLS configuration.',
-      outcomes: ['Security audits', 'Access control setup', 'Data encryption'],
-    },
-    {
-      number: '07',
-      title: 'IT Operations',
-      description: 'System health monitoring, backup management, and incident response.',
-      outcomes: ['Server health telemetry', 'Automated backups', 'Incident logging'],
-    },
+    { number: '01', title: 'Digital Products', description: 'End-user web engines and software applications built for sub-second performance.' },
+    { number: '02', title: 'Business Platforms', description: 'Multi-tenant operational environments for enterprise workflows and multi-role access.' },
+    { number: '03', title: 'Artificial Intelligence', description: 'Applied machine learning pipelines for language processing and automated document extraction.' },
+    { number: '04', title: 'Automation Systems', description: 'Event-driven background processing and real-time database synchronization.' },
+    { number: '05', title: 'Cloud Infrastructure', description: 'Containerized deployment infrastructure and global edge network distribution.' },
+    { number: '06', title: 'Infrastructure & Security', description: 'Network perimeter configuration, TLS 1.3 encryption, and identity protection.' },
+    { number: '07', title: 'Mobile Applications', description: 'Native iOS and Android client applications focused on offline persistence and hardware speed.' },
+    { number: '08', title: 'Enterprise Software', description: 'Custom internal administrative software, inventory control, and backend databases.' },
+    { number: '09', title: 'System Integration', description: 'Structured REST and GraphQL Web APIs for legacy database migration.' },
+    { number: '10', title: 'Analytics & Reporting', description: 'Privacy-focused server telemetry and real-time operational dashboarding.' },
   ];
 
   return (
-    <div className="w-full flex flex-col gap-20 md:gap-32 pb-24">
+    <div className="w-full flex flex-col gap-20 md:gap-32 pb-24 pt-12 md:pt-16">
       {/* Header */}
-      <section className="pt-12 md:pt-16">
+      <section>
         <Container size="normal" className="flex flex-col gap-4">
           <FadeIn>
             <Typography variant="mono" muted className="mb-2">
-              TECHNICAL CAPABILITIES
+              TECHNICAL SCOPE
             </Typography>
-            <Typography variant="display" className="max-w-4xl">
+            <Typography variant="display" className="max-w-4xl tracking-[-0.035em]">
               Engineering Capabilities.
-            </Typography>
-            <Typography variant="lead" muted className="max-w-2xl text-lg md:text-xl mt-2">
-              We present our technical work as engineering capabilities focused on building reliable digital products.
             </Typography>
           </FadeIn>
         </Container>
@@ -80,15 +44,22 @@ export default function SolutionsPage() {
       {/* Grid of Capabilities */}
       <section>
         <Container size="normal">
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {capabilities.map((cap) => (
               <StaggerItem key={cap.number}>
-                <CapabilityBlock
-                  number={cap.number}
-                  title={cap.title}
-                  description={cap.description}
-                  outcomes={cap.outcomes}
-                />
+                <div className="p-8 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] hover:border-[var(--border-medium)] transition-colors flex flex-col justify-between gap-4 h-full">
+                  <div className="flex flex-col gap-2">
+                    <span className="font-mono text-xs text-[var(--text-tertiary)] tracking-widest">
+                      CAPABILITY // {cap.number}
+                    </span>
+                    <h3 className="text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
+                      {cap.title}
+                    </h3>
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed mt-1">
+                      {cap.description}
+                    </p>
+                  </div>
+                </div>
               </StaggerItem>
             ))}
           </StaggerContainer>

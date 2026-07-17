@@ -20,13 +20,13 @@ export const CareersForm: React.FC = () => {
           ✓
         </div>
         <Typography variant="h2" className="text-2xl md:text-3xl">
-          Profile Received
+          Profile Logged
         </Typography>
-        <Typography variant="body" muted className="max-w-md">
-          Thank you. Your engineering profile has been logged in our talent database. Our leadership team reviews profiles weekly.
+        <Typography variant="body" muted className="max-w-md text-sm leading-relaxed">
+          Your engineering record has been logged. Engineering leadership reviews profiles directly.
         </Typography>
         <Button onClick={() => setSubmitted(false)} variant="secondary" size="sm" className="mt-4">
-          Submit Another Profile
+          Submit Another Record
         </Button>
       </div>
     );
@@ -35,20 +35,20 @@ export const CareersForm: React.FC = () => {
   return (
     <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Input label="Full Name" placeholder="e.g. Alex Mercer" required />
-        <Input label="Email Address" type="email" placeholder="alex@domain.com" required />
+        <Input label="Name" placeholder="Alex Mercer" required />
+        <Input label="Email" type="email" placeholder="alex@domain.com" required />
       </div>
 
-      <Input label="GitHub / Portfolio URL" placeholder="https://github.com/username" required />
+      <Input label="Repository / Portfolio" placeholder="https://github.com/username" required />
 
       <Textarea
-        label="Selected Engineering Work"
-        placeholder="Briefly describe 1-2 platform problems you solved or systems you engineered..."
+        label="Engineering Record"
+        placeholder="Detail 1-2 core system problems you solved or software architectures you engineered..."
         required
       />
 
       <Button type="submit" variant="primary" size="lg" className="w-full">
-        Submit Application Profile
+        Deliver Engineering Profile
       </Button>
     </form>
   );

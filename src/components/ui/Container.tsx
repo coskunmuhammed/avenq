@@ -23,7 +23,7 @@ export const Container: React.FC<ContainerProps> = ({
 
   return (
     <Component
-      className={`mx-auto w-full px-6 md:px-12 lg:px-16 ${sizeMap[size]} ${className}`}
+      className={`mx-auto w-full px-4 sm:px-6 md:px-12 lg:px-16 ${sizeMap[size]} ${className}`}
       {...props}
     >
       {children}

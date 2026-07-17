@@ -4,57 +4,183 @@ import { Typography } from '@/components/ui/Typography';
 import { Button } from '@/components/ui/Button';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/Motion';
 import { ProductShowcaseCard } from '@/components/product/ProductShowcaseCard';
-import { CapabilityBlock } from '@/components/solution/CapabilityBlock';
 
 export default function HomePage() {
+  const ecosystemPillars = [
+    {
+      id: 'public',
+      title: 'Public Products',
+      subtitle: 'STANDALONE PLATFORMS',
+      count: '4 PLATFORMS',
+      description: 'Independent software products engineered for targeted industry domains.',
+      items: ['SATKIRALA', 'MÜLKÜNÜHESAPLA', 'KASTYÖREM', 'QUIZ OF THE SEAS'],
+      href: '/products#public',
+    },
+    {
+      id: 'business',
+      title: 'Business Solutions',
+      subtitle: 'PLATFORM CAPABILITIES',
+      count: '10 DISCIPLINES',
+      description: 'Custom software architectures, process automation, and cloud infrastructure.',
+      items: ['QR MENU', 'AI Automation Systems', 'Enterprise Software', 'iOS & Android Apps'],
+      href: '/products#business',
+    },
+    {
+      id: 'creative',
+      title: 'Creative & Digital',
+      subtitle: 'CREATIVE ENGINEERING',
+      count: '6 CAPABILITIES',
+      description: 'Brand identity systems, corporate web engines, and commerce infrastructure.',
+      items: ['ALTUNMEDYA', 'Brand Identity Systems', 'Corporate Systems', 'SEO Infrastructure'],
+      href: '/products#creative',
+    },
+  ];
+
+  const industries = [
+    'Real Estate',
+    'Hospitality',
+    'Retail',
+    'Manufacturing',
+    'Professional Services',
+    'Legal',
+    'Education',
+    'Healthcare',
+    'Technology',
+  ];
+
   return (
-    <div className="w-full flex flex-col gap-24 md:gap-36 pb-20">
-      {/* 1. Hero Section (Clean viewport fit across 1366x768, 1440x900, 1920x1080) */}
+    <div className="w-full flex flex-col gap-28 md:gap-40 pb-24">
+      {/* 1. Hero Section */}
       <section className="pt-12 sm:pt-16 md:pt-24 lg:pt-28 pb-8 md:pb-12">
         <Container size="normal" className="flex flex-col gap-6 md:gap-8">
           <FadeIn direction="up" distance={10}>
             <Typography variant="display" className="max-w-4xl tracking-[-0.035em]">
-              Building Digital Businesses.
+              Software built to endure.
             </Typography>
           </FadeIn>
 
           <FadeIn direction="up" distance={8} delay={0.05}>
             <Typography variant="lead" muted className="max-w-2xl text-xl md:text-2xl font-normal leading-relaxed">
-              We build companies through technology.
+              We build software products, business platforms, and digital infrastructure.
             </Typography>
           </FadeIn>
 
           <FadeIn direction="up" distance={6} delay={0.1}>
             <div className="flex items-center gap-6 pt-4 flex-wrap">
               <Button href="/products" variant="primary" size="lg">
-                Explore Products
+                Explore Product Ecosystem
               </Button>
               <Link
                 href="/about"
                 className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors inline-flex items-center gap-1 min-h-[44px]"
               >
-                Our Philosophy →
+                Read Manifesto →
               </Link>
             </div>
           </FadeIn>
         </Container>
       </section>
 
-      {/* 2. Product Ecosystem */}
+      {/* 2. Ecosystem Overview */}
+      <section className="border-t border-[var(--border-subtle)] pt-20 md:pt-28">
+        <Container size="normal" className="flex flex-col gap-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="flex flex-col gap-3 max-w-xl">
+              <Typography variant="mono" muted>
+                PRODUCT ECOSYSTEM
+              </Typography>
+              <Typography variant="h2" className="text-3xl md:text-5xl tracking-tight">
+                Technology Across Industries.
+              </Typography>
+            </div>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors inline-flex items-center gap-1 shrink-0 min-h-[44px]"
+            >
+              Inspect Ecosystem →
+            </Link>
+          </div>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {ecosystemPillars.map((pillar) => (
+              <StaggerItem key={pillar.id}>
+                <Link
+                  href={pillar.href}
+                  className="group p-8 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] hover:border-[var(--text-primary)] transition-all flex flex-col justify-between gap-8 h-full block"
+                >
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                      <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-widest uppercase">
+                        {pillar.subtitle}
+                      </span>
+                      <span className="font-mono text-[11px] text-[var(--text-secondary)] font-medium">
+                        {pillar.count}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
+                      {pillar.title}
+                    </h3>
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                      {pillar.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-[var(--border-subtle)] flex flex-col gap-2">
+                    <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider">
+                      FEATURED NODES
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {pillar.items.map((item, idx) => (
+                        <span key={idx} className="font-mono text-xs text-[var(--text-secondary)] bg-[#1C1C1C] px-2 py-1 rounded border border-[var(--border-subtle)]">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </Container>
+      </section>
+
+      {/* 3. Manifesto — Short Statements */}
+      <section className="py-24 border-y border-[var(--border-subtle)] bg-[#141414]">
+        <Container size="narrow">
+          <FadeIn>
+            <div className="flex flex-col gap-8">
+              <Typography variant="mono" muted>
+                BRAND MANIFESTO
+              </Typography>
+              <Typography variant="h2" className="text-3xl md:text-5xl leading-tight tracking-tight">
+                Why AVENQ Exists
+              </Typography>
+              <div className="flex flex-col gap-4 text-lg md:text-xl text-[var(--text-secondary)] font-medium leading-snug">
+                <p className="text-[var(--text-primary)]">We build products.</p>
+                <p>Not billable hours.</p>
+                <p>We remove complexity.</p>
+                <p>We solve operational problems permanently.</p>
+              </div>
+            </div>
+          </FadeIn>
+        </Container>
+      </section>
+
+      {/* 4. Flagship Showcase */}
       <section>
         <Container size="normal" className="flex flex-col gap-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--border-subtle)] pb-6">
             <div className="flex flex-col gap-2">
               <Typography variant="mono" muted>
-                PROPRIETARY PLATFORMS
+                PUBLIC PLATFORMS
               </Typography>
-              <Typography variant="h2">Product Ecosystem</Typography>
+              <Typography variant="h2">Ecosystem Showcase</Typography>
             </div>
             <Link
-              href="/products"
+              href="/products#public"
               className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors inline-flex items-center gap-1 self-start md:self-auto min-h-[44px]"
             >
-              View All Products & Roadmap →
+              View All Platforms →
             </Link>
           </div>
 
@@ -62,116 +188,88 @@ export default function HomePage() {
             <StaggerItem>
               <ProductShowcaseCard
                 name="SATKIRALA"
-                positioning="The operating system for the Turkish real estate industry."
-                audience="Property owners, real estate consultants and brokerage businesses."
-                purpose="Helps property owners discover suitable consultants and gives consultants a structured digital presence."
-                capabilities={[
-                  'Consultant discovery',
-                  'Consultant profiles',
-                  'Location-based pages',
-                  'Verification-focused trust structure',
-                  'Real estate discovery tools',
-                ]}
+                sentence="Operating system for the Turkish real estate industry."
+                philosophy="Trust requires structure, not advertising."
+                purpose="Connects property owners directly with verified real estate consultants."
+                statusLabel="Live"
                 linkHref="/products#satkirala"
               />
             </StaggerItem>
 
             <StaggerItem>
               <ProductShowcaseCard
-                name="QR MENU"
-                positioning="A digital menu and restaurant operations platform."
-                audience="Restaurants, cafés, hotels and hospitality businesses."
-                purpose="Helps businesses publish digital menus and manage key operational content from one system."
-                capabilities={[
-                  'QR menu publishing',
-                  'Category and product management',
-                  'Campaigns & Events',
-                  'Reservations management',
-                  'Business administration',
-                ]}
-                linkHref="/products#qrmenu"
+                name="MÜLKÜNÜHESAPLA"
+                sentence="Property valuation and market intelligence platform."
+                philosophy="Decisions require data, not speculation."
+                purpose="Algorithmic property valuation and real estate location intelligence."
+                statusLabel="Live"
+                linkHref="/products#mulkunuhesapla"
               />
             </StaggerItem>
           </StaggerContainer>
         </Container>
       </section>
 
-      {/* 3. Capabilities */}
-      <section>
-        <Container size="normal" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
-            <Typography variant="mono" muted>
-              ENGINEERING CAPABILITIES
-            </Typography>
-            <Typography variant="h2">What We Build</Typography>
-          </div>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <StaggerItem>
-              <CapabilityBlock
-                number="01"
-                title="AI Systems"
-                description="Custom language processing, document extraction, and workflow automation."
-                outcomes={['Custom model integration', 'Document extraction', 'Automated workflows']}
-              />
-            </StaggerItem>
-
-            <StaggerItem>
-              <CapabilityBlock
-                number="02"
-                title="Software Engineering"
-                description="Enterprise platform design, structured APIs, and web application architecture."
-                outcomes={['Web application development', 'Structured Web APIs', 'Modular architecture']}
-              />
-            </StaggerItem>
-
-            <StaggerItem>
-              <CapabilityBlock
-                number="03"
-                title="Cloud Infrastructure"
-                description="Cloud platform setup, deployment automation, and system reliability."
-                outcomes={['Cloud deployment', 'Automated pipelines', 'System uptime monitoring']}
-              />
-            </StaggerItem>
-          </StaggerContainer>
-
-          <div className="pt-4 flex justify-center">
-            <Button href="/solutions" variant="secondary" size="lg">
-              Explore All 7 Engineering Capabilities →
-            </Button>
-          </div>
-        </Container>
-      </section>
-
-      {/* 4. Philosophy Statement */}
-      <section className="py-20 border-y border-[var(--border-subtle)] bg-[#141414]">
+      {/* 5. Operating Stance */}
+      <section className="py-24 border-y border-[var(--border-subtle)] bg-[#0F0F0F]">
         <Container size="narrow">
           <FadeIn>
             <div className="flex flex-col gap-6">
               <Typography variant="mono" muted>
-                OUR OPERATING PHILOSOPHY
+                OPERATING STANCE
               </Typography>
-              <Typography variant="h2" className="text-2xl md:text-4xl leading-tight">
-                AVENQ is a technology company.
+              <Typography variant="h2" className="text-3xl md:text-4xl leading-tight">
+                We Build More Than Products.
               </Typography>
-              <Typography variant="lead" muted className="text-base md:text-lg leading-relaxed">
-                We create software products, build platforms, and engineer technology systems for long-term growth. We solve real business problems through software engineering.
-              </Typography>
+              <div className="flex flex-col gap-3 text-lg md:text-xl text-[var(--text-secondary)] leading-relaxed">
+                <p>Some systems become public products.</p>
+                <p>Others remain internal platforms built for specific organizations.</p>
+                <p className="text-[var(--text-primary)] font-medium">
+                  Sometimes the best software is the software no one notices.
+                </p>
+              </div>
             </div>
           </FadeIn>
         </Container>
       </section>
 
-      {/* 5. Contact Statement */}
+      {/* 6. Industry Experience Grid */}
+      <section>
+        <Container size="normal" className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
+            <Typography variant="mono" muted>
+              DOMAIN KNOWLEDGE
+            </Typography>
+            <Typography variant="h2">Industries We've Worked With</Typography>
+          </div>
+
+          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+            {industries.map((ind, idx) => (
+              <StaggerItem key={idx}>
+                <div className="p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] flex flex-col gap-2">
+                  <span className="font-mono text-xs text-[var(--text-tertiary)]">
+                    SECTOR // 0{idx + 1}
+                  </span>
+                  <h3 className="text-lg md:text-xl font-medium text-[var(--text-primary)]">
+                    {ind}
+                  </h3>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </Container>
+      </section>
+
+      {/* 7. Direct Engineering Contact */}
       <section>
         <Container size="normal">
           <div className="border border-[var(--border-medium)] rounded-[6px] p-8 md:p-14 bg-[#141414] flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="flex flex-col gap-3 max-w-xl">
               <Typography variant="h2" className="text-2xl md:text-3xl">
-                Initiate Engineering Contact
+                Direct Engineering Inquiries
               </Typography>
               <Typography variant="body" muted>
-                Engage directly with AVENQ leadership regarding product inquiries or technical requirements.
+                Engage directly with AVENQ leadership regarding custom software architecture or platform inquiries.
               </Typography>
             </div>
             <Button href="/contact" variant="primary" size="lg" className="shrink-0">

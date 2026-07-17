@@ -31,20 +31,38 @@ export const Navbar: React.FC = () => {
     };
   }, [handleKeyDown]);
 
+  // Lock body scroll when mobile drawer is active
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  // Auto-close menu when navigating routes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   const navLinks = [
     { name: 'About', href: '/about' },
     { name: 'Products', href: '/products' },
     { name: 'Solutions', href: '/solutions' },
+    { name: 'Docs', href: '/docs' },
     { name: 'Careers', href: '/careers' },
     { name: 'Contact', href: '/contact' },
   ];
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
-        scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+        scrolled || mobileMenuOpen
           ? 'bg-[#0B0B0B] border-b border-[var(--border-subtle)] py-4'
-          : 'bg-[#0B0B0B]/90 py-5 md:py-6'
+          : 'bg-[#0B0B0B]/90 backdrop-blur-md py-4 md:py-6'
       }`}
     >
       <Container size="normal" className="flex items-center justify-between">
@@ -52,12 +70,9 @@ export const Navbar: React.FC = () => {
         <Link
           href="/"
           aria-label="AVENQ Home"
-          className="group flex items-center gap-3 font-semibold text-lg tracking-[-0.04em] text-[var(--text-primary)] min-h-[44px] min-w-[44px] items-center"
+          className="font-semibold text-lg tracking-[-0.04em] text-[var(--text-primary)] min-h-[44px] flex items-center select-none"
         >
-          <span className="font-mono text-xs tracking-widest px-1.5 py-0.5 border border-[var(--border-medium)] rounded text-[var(--text-secondary)] group-hover:border-[var(--text-primary)] transition-colors">
-            AQ
-          </span>
-          <span className="uppercase tracking-[0.15em] font-medium text-base">
+          <span className="uppercase tracking-[0.2em] font-bold text-base text-[var(--text-primary)]">
             AVENQ
           </span>
         </Link>
@@ -65,7 +80,7 @@ export const Navbar: React.FC = () => {
         {/* Desktop Minimal Navigation */}
         <nav className="hidden md:flex items-center gap-8" aria-label="Main Navigation">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
             return (
               <Link
                 key={link.href}
@@ -88,7 +103,7 @@ export const Navbar: React.FC = () => {
         {/* Mobile Toggle Button (≥44px tap target) */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:outline-none"
+          className="md:hidden p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] active:scale-95 focus:outline-none"
           aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={mobileMenuOpen}
         >
@@ -107,27 +122,33 @@ export const Navbar: React.FC = () => {
         </button>
       </Container>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer & Full Overlay */}
       {mobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-x-0 top-[65px] bg-[#0B0B0B] border-b border-[var(--border-subtle)] px-6 py-8 flex flex-col gap-6 shadow-2xl"
+          className="md:hidden fixed inset-x-0 top-[65px] bottom-0 bg-[#0B0B0B] border-b border-[var(--border-subtle)] px-6 py-8 flex flex-col gap-6 shadow-2xl z-50 overflow-y-auto animate-fadeIn"
           role="dialog"
           aria-label="Mobile Navigation"
         >
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`text-lg tracking-tight transition-colors py-2 min-h-[44px] flex items-center ${
-                pathname === link.href
-                  ? 'text-[var(--text-primary)] font-medium'
-                  : 'text-[var(--text-secondary)]'
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
+          <div className="flex flex-col gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-xl tracking-tight transition-colors py-3 border-b border-[var(--border-subtle)] min-h-[48px] flex items-center ${
+                  pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                    ? 'text-[var(--text-primary)] font-semibold'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-auto pt-8 border-t border-[var(--border-subtle)] flex flex-col gap-2 font-mono text-xs text-[var(--text-tertiary)]">
+            <p>AVENQ — Building Digital Businesses.</p>
+            <p className="text-[var(--text-secondary)]">contact@avenq.pro</p>
+          </div>
         </div>
       )}
     </header>

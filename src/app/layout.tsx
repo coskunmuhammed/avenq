@@ -1,8 +1,15 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { generateOrganizationSchema } from '@/lib/seo/schema';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#0B0B0B',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://avenq.pro'),
@@ -80,7 +87,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col selection:bg-white selection:text-black">
         <Navbar />
-        <main className="flex-grow pt-24 md:pt-32">{children}</main>
+        <main className="flex-grow pt-20 md:pt-28">{children}</main>
         <Footer />
       </body>
     </html>

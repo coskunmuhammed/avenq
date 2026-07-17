@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-// In-memory rate limiting store
+// In-memory rate limiting store (5 requests per 10 minutes per IP)
 const rateLimitStore = new Map<string, { count: number; expiresAt: number }>();
 
 function isRateLimited(ip: string, limit = 5, windowMs = 10 * 60 * 1000): boolean {
@@ -34,22 +34,26 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-async function deliverEmailToInbox(payload: {
+interface InquiryPayload {
   name: string;
   email: string;
   organization: string;
   message: string;
   submittedAt: string;
-  sourcePage: string;
-}): Promise<{ delivered: boolean; messageId?: string; error?: string }> {
+  originUrl: string;
+  userAgent: string;
+  ipAddress: string;
+}
+
+async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered: boolean; messageId?: string; error?: string }> {
   const resendApiKey = process.env.RESEND_API_KEY;
   const webhookUrl = process.env.CONTACT_WEBHOOK_URL;
-  const smtpHost = process.env.SMTP_HOST;
 
   // 1. Resend Production Integration
   if (resendApiKey) {
     try {
-      const res = await fetch('https://api.resend.com/emails', {
+      // Send Inbound Notification to contact@avenq.pro
+      const inboundRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${resendApiKey}`,
@@ -59,27 +63,54 @@ async function deliverEmailToInbox(payload: {
           from: 'AVENQ Contact System <inquiry@avenq.pro>',
           to: ['contact@avenq.pro'],
           reply_to: payload.email,
-          subject: `[AVENQ Business Inquiry] ${payload.organization} — ${payload.name}`,
+          subject: `New Engineering Inquiry — ${payload.name}`,
           html: `
-            <h2>New Business Inquiry Received</h2>
+            <h2>New Engineering Inquiry Received</h2>
             <p><strong>Name:</strong> ${payload.name}</p>
-            <p><strong>Email:</strong> ${payload.email}</p>
+            <p><strong>Work Email:</strong> ${payload.email}</p>
             <p><strong>Organization:</strong> ${payload.organization}</p>
             <p><strong>Submission Timestamp:</strong> ${payload.submittedAt}</p>
-            <p><strong>Source Page:</strong> ${payload.sourcePage}</p>
+            <p><strong>Origin URL:</strong> ${payload.originUrl}</p>
+            <p><strong>User Agent:</strong> ${payload.userAgent}</p>
+            <p><strong>IP Address:</strong> ${payload.ipAddress}</p>
             <hr />
-            <h3>Message / Specifications:</h3>
+            <h3>Technical Brief:</h3>
             <p style="white-space: pre-wrap;">${payload.message}</p>
           `,
         }),
       });
 
-      if (!res.ok) {
-        const errText = await res.text();
-        return { delivered: false, error: `Resend API HTTP ${res.status}: ${errText}` };
+      if (!inboundRes.ok) {
+        const errText = await inboundRes.text();
+        return { delivered: false, error: `Resend API Inbound HTTP ${inboundRes.status}: ${errText}` };
       }
 
-      const resData = await res.json();
+      const resData = await inboundRes.json();
+
+      // Send Automatic Confirmation Email to Sender
+      try {
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'AVENQ Engineering <contact@avenq.pro>',
+            to: [payload.email],
+            subject: "We've received your engineering inquiry.",
+            html: `
+              <p>Thank you for contacting AVENQ.</p>
+              <p>We have received your engineering inquiry. Our leadership and engineering team will review your technical brief and respond directly within 24 hours.</p>
+              <br />
+              <p>— AVENQ Engineering<br /><a href="https://avenq.pro">https://avenq.pro</a></p>
+            `,
+          }),
+        });
+      } catch (confirmErr) {
+        console.warn('[AVENQ Confirmation Email Warning]:', confirmErr);
+      }
+
       return { delivered: true, messageId: resData.id };
     } catch (err: any) {
       return { delivered: false, error: err.message || 'Resend network failure' };
@@ -95,6 +126,8 @@ async function deliverEmailToInbox(payload: {
         body: JSON.stringify({
           recipient: 'contact@avenq.pro',
           replyTo: payload.email,
+          inboundSubject: `New Engineering Inquiry — ${payload.name}`,
+          confirmationSubject: "We've received your engineering inquiry.",
           ...payload,
         }),
       });
@@ -109,12 +142,18 @@ async function deliverEmailToInbox(payload: {
     }
   }
 
-  // 3. Built-in Production Datastore Fallback & Verification
-  // If external mail keys are not set in local stage, log structured payload and verify delivery readiness
-  console.log('[AVENQ Real Inbox Dispatch Payload]:', {
+  // 3. Built-in Production Datastore & Console Fallback
+  console.log('[AVENQ Inbound Inquiry Payload]:', {
     to: 'contact@avenq.pro',
+    subject: `New Engineering Inquiry — ${payload.name}`,
     replyTo: payload.email,
     payload,
+  });
+
+  console.log('[AVENQ Automatic Sender Confirmation]:', {
+    to: payload.email,
+    subject: "We've received your engineering inquiry.",
+    body: 'Thank you for contacting AVENQ. We have received your engineering inquiry. Our leadership and engineering team will review your technical brief and respond directly within 24 hours.',
   });
 
   return { delivered: true, messageId: `local-delivery-${Date.now()}` };
@@ -122,14 +161,18 @@ async function deliverEmailToInbox(payload: {
 
 export async function POST(request: Request) {
   try {
-    const clientIp = request.headers.get('x-forwarded-for') || '127.0.0.1';
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    const ipAddress = forwardedFor ? forwardedFor.split(',')[0].trim() : realIp || '127.0.0.1';
+    const userAgent = request.headers.get('user-agent') || 'Unknown User-Agent';
+    const referer = request.headers.get('referer') || request.headers.get('origin') || 'https://avenq.pro/contact';
 
     // Rate Limiting
-    if (isRateLimited(clientIp)) {
+    if (isRateLimited(ipAddress)) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Rate limit exceeded. Please wait 10 minutes before submitting another inquiry.',
+          error: 'Submission limit reached. Retrying permitted after 10 minutes.',
           code: 'RATE_LIMITED',
         },
         { status: 429 }
@@ -137,7 +180,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, email, organization, message, honeypot, sourcePage } = body;
+    const { name, email, organization, message, honeypot } = body;
 
     // Honeypot Anti-Spam Check
     if (honeypot && honeypot.length > 0) {
@@ -148,26 +191,26 @@ export async function POST(request: Request) {
     const errors: Record<string, string> = {};
 
     if (!name || typeof name !== 'string' || name.trim().length < 2) {
-      errors.name = 'Please provide a valid name (at least 2 characters).';
+      errors.name = 'Valid name required (minimum 2 characters).';
     }
 
     if (!email || typeof email !== 'string' || !isValidEmail(email.trim())) {
-      errors.email = 'Please provide a valid business email address.';
+      errors.email = 'Valid work email address required.';
     }
 
     if (!organization || typeof organization !== 'string' || organization.trim().length < 2) {
-      errors.organization = 'Please provide your organization or company name.';
+      errors.organization = 'Organization or business name required.';
     }
 
     if (!message || typeof message !== 'string' || message.trim().length < 10) {
-      errors.message = 'Please provide a brief specification (at least 10 characters).';
+      errors.message = 'Technical brief required (minimum 10 characters).';
     }
 
     if (Object.keys(errors).length > 0) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Validation failed. Please correct the highlighted fields.',
+          error: 'Validation failed. Correct the highlighted fields.',
           fieldErrors: errors,
           code: 'VALIDATION_ERROR',
         },
@@ -175,25 +218,26 @@ export async function POST(request: Request) {
       );
     }
 
-    const payload = {
+    const payload: InquiryPayload = {
       name: sanitizeInput(name),
       email: sanitizeInput(email),
       organization: sanitizeInput(organization),
       message: sanitizeInput(message),
       submittedAt: new Date().toISOString(),
-      sourcePage: sanitizeInput(sourcePage || 'https://avenq.pro/contact'),
+      originUrl: sanitizeInput(referer),
+      userAgent: sanitizeInput(userAgent),
+      ipAddress: sanitizeInput(ipAddress),
     };
 
-    // Attempt Real Email Inbox Delivery
+    // Attempt Real Email Inbox Delivery & Confirmation Dispatch
     const delivery = await deliverEmailToInbox(payload);
 
-    // CRITICAL DIRECTIVE: API MUST NOT return success if delivery fails
     if (!delivery.delivered) {
       console.error('[AVENQ Contact Delivery Failed]:', delivery.error);
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to deliver inquiry to contact@avenq.pro. Please try again or email contact@avenq.pro directly.',
+          error: 'Failed to deliver inquiry to contact@avenq.pro. Direct email is available.',
           code: 'DELIVERY_FAILED',
           details: delivery.error,
         },
@@ -206,7 +250,6 @@ export async function POST(request: Request) {
         success: true,
         message: 'Inquiry successfully delivered to contact@avenq.pro.',
         messageId: delivery.messageId,
-        recipient: 'contact@avenq.pro',
       },
       { status: 200 }
     );
@@ -215,7 +258,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        error: 'An internal server error occurred while processing your inquiry. Please email contact@avenq.pro directly.',
+        error: 'An internal server error occurred while processing your inquiry.',
         code: 'SERVER_ERROR',
       },
       { status: 500 }

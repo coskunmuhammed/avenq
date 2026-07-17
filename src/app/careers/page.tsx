@@ -6,89 +6,122 @@ import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/Motion';
 import { CareersForm } from '@/components/careers/CareersForm';
 
 export const metadata: Metadata = {
-  title: 'Careers',
-  description: 'Engineering culture and open career opportunities at AVENQ.',
+  title: 'Engineering Careers',
+  description: 'How we write software, review code, document decisions, and hire engineers at AVENQ.',
   alternates: {
     canonical: 'https://avenq.pro/careers',
   },
 };
 
+const engineeringPractices = [
+  {
+    number: '01',
+    title: 'How We Write Software',
+    description: 'We write strongly typed, self-documenting code with zero unnecessary dependencies.',
+  },
+  {
+    number: '02',
+    title: 'How We Review Code',
+    description: 'Pull requests are evaluated for architectural clarity and edge-case coverage.',
+  },
+  {
+    number: '03',
+    title: 'How We Document',
+    description: 'Architectural decisions are written in markdown before code is committed.',
+  },
+  {
+    number: '04',
+    title: 'How We Make Decisions',
+    description: 'Decisions are grounded in benchmarks and telemetry—never hierarchy or trends.',
+  },
+];
+
+const whoThrives = [
+  'Engineers who prefer writing software to sitting in status meetings.',
+  'Architects who take personal pride in sub-100ms response times.',
+  'Pragmatists who understand that deleting code is better than writing new code.',
+  'Builders who take full end-to-end ownership of production systems.',
+];
+
 export default function CareersPage() {
   return (
-    <div className="w-full flex flex-col gap-20 md:gap-32 pb-24">
+    <div className="w-full flex flex-col gap-24 md:gap-36 pb-24 pt-12 md:pt-16">
       {/* Header */}
-      <section className="pt-12 md:pt-16">
+      <section>
         <Container size="normal" className="flex flex-col gap-4">
           <FadeIn>
             <Typography variant="mono" muted className="mb-2">
-              TALENT & CULTURE
+              TALENT & PRACTICE
             </Typography>
-            <Typography variant="display" className="max-w-4xl">
+            <Typography variant="display" className="max-w-4xl tracking-[-0.035em]">
               Engineering at AVENQ.
-            </Typography>
-            <Typography variant="lead" muted className="max-w-2xl text-lg md:text-xl mt-2">
-              We operate with small, focused engineering teams. We value autonomy, clear technical communication, and practical problem solving.
             </Typography>
           </FadeIn>
         </Container>
       </section>
 
-      {/* Cultural Foundations */}
+      {/* Engineering Practices Grid */}
       <section>
-        <Container size="normal">
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StaggerItem>
-              <Card variant="subtle" padding="lg" className="h-full flex flex-col gap-4">
-                <Typography variant="mono" muted>
-                  01 / AUTONOMY
-                </Typography>
-                <Typography variant="h3">Total Ownership</Typography>
-                <Typography variant="body" muted className="leading-relaxed">
-                  Engineers own their code from design through testing to production deployment.
-                </Typography>
-              </Card>
-            </StaggerItem>
+        <Container size="normal" className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
+            <Typography variant="mono" muted>
+              ENGINEERING CULTURE
+            </Typography>
+            <Typography variant="h2">How We Work</Typography>
+          </div>
 
-            <StaggerItem>
-              <Card variant="subtle" padding="lg" className="h-full flex flex-col gap-4">
-                <Typography variant="mono" muted>
-                  02 / RIGOR
-                </Typography>
-                <Typography variant="h3">Clean Architecture</Typography>
-                <Typography variant="body" muted className="leading-relaxed">
-                  We write readable, testable, and well-structured code. Maintainability is a priority.
-                </Typography>
-              </Card>
-            </StaggerItem>
-
-            <StaggerItem>
-              <Card variant="subtle" padding="lg" className="h-full flex flex-col gap-4">
-                <Typography variant="mono" muted>
-                  03 / FOCUS
-                </Typography>
-                <Typography variant="h3">Direct Execution</Typography>
-                <Typography variant="body" muted className="leading-relaxed">
-                  We minimize unnecessary meetings and focus on building functional products.
-                </Typography>
-              </Card>
-            </StaggerItem>
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {engineeringPractices.map((practice) => (
+              <StaggerItem key={practice.number}>
+                <Card variant="subtle" padding="lg" className="h-full flex flex-col gap-3">
+                  <Typography variant="mono" muted>
+                    PRACTICE // {practice.number}
+                  </Typography>
+                  <Typography variant="h3">{practice.title}</Typography>
+                  <Typography variant="body" muted className="leading-relaxed">
+                    {practice.description}
+                  </Typography>
+                </Card>
+              </StaggerItem>
+            ))}
           </StaggerContainer>
+        </Container>
+      </section>
+
+      {/* Who Thrives at AVENQ */}
+      <section className="py-20 border-y border-[var(--border-subtle)] bg-[#141414]">
+        <Container size="narrow" className="flex flex-col gap-8">
+          <FadeIn>
+            <div className="flex flex-col gap-6">
+              <Typography variant="mono" muted>
+                PROFILE ALIGNMENT
+              </Typography>
+              <Typography variant="h2" className="text-2xl md:text-4xl font-semibold tracking-tight">
+                Who Thrives at AVENQ
+              </Typography>
+              <ul className="flex flex-col gap-4 pt-2">
+                {whoThrives.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-3 text-base text-[var(--text-secondary)] leading-relaxed">
+                    <span className="font-mono text-xs text-[var(--text-primary)] pt-1">0{idx + 1}.</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </FadeIn>
         </Container>
       </section>
 
       {/* Talent Submission Form */}
       <section>
         <Container size="narrow">
-          <Card variant="bordered" padding="lg" className="flex flex-col gap-8">
+          <Card variant="bordered" padding="lg" className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Typography variant="mono" muted>
                 TALENT NETWORK
               </Typography>
               <Typography variant="h2" className="text-2xl md:text-3xl">
-                Submit Your Profile
-              </Typography>
-              <Typography variant="body" muted>
-                We are interested in software engineers, designers, and systems architects. Share your work with us.
+                Submit Engineering Profile
               </Typography>
             </div>
 

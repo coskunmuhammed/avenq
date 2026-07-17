@@ -46,7 +46,6 @@ export const ContactForm: React.FC = () => {
           organization: formData.organization,
           message: formData.message,
           honeypot: formData.website_url_honeypot,
-          sourcePage: typeof window !== 'undefined' ? window.location.href : 'https://avenq.pro/contact',
         }),
       });
 
@@ -63,19 +62,19 @@ export const ContactForm: React.FC = () => {
         });
       } else if (response.status === 429) {
         setStatus('rate_limited');
-        setErrorMessage(data.error || 'Rate limit exceeded. Please wait 10 minutes before submitting again.');
+        setErrorMessage(data.error || 'Submission limit reached. Retrying permitted after 10 minutes.');
       } else if (response.status === 400 && data.fieldErrors) {
         setStatus('validation_error');
         setFieldErrors(data.fieldErrors);
-        setErrorMessage(data.error || 'Please correct the highlighted form errors.');
+        setErrorMessage(data.error || 'Correct the highlighted fields to continue.');
       } else {
         setStatus('server_error');
-        setErrorMessage(data.error || 'Delivery to contact@avenq.pro failed. Please email contact@avenq.pro directly.');
+        setErrorMessage(data.error || 'Transmission unconfirmed. Please try again.');
       }
     } catch (err) {
       console.error('[Contact Form Network Error]:', err);
       setStatus('server_error');
-      setErrorMessage('Network connection error. Please verify your internet connection or email contact@avenq.pro directly.');
+      setErrorMessage('Network connection lost. Please try again.');
     }
   };
 
@@ -86,10 +85,10 @@ export const ContactForm: React.FC = () => {
           ✓
         </div>
         <Typography variant="h2" className="text-2xl md:text-3xl">
-          Inquiry Delivered
+          Brief Transmitted
         </Typography>
-        <Typography variant="body" muted className="max-w-md">
-          Thank you. Your message has been delivered to <code>contact@avenq.pro</code>. Our team will review your inquiry within 24 hours.
+        <Typography variant="body" muted className="max-w-md text-sm leading-relaxed">
+          Your inquiry has been delivered directly to <code>contact@avenq.pro</code>. A confirmation email has been sent to your inbox.
         </Typography>
         <Button
           onClick={() => setStatus('idle')}
@@ -97,23 +96,14 @@ export const ContactForm: React.FC = () => {
           size="sm"
           className="mt-4"
         >
-          Send Another Inquiry
+          Transmit Another Inquiry
         </Button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate aria-label="Technical Inquiry Form">
-      <div className="flex flex-col gap-2 mb-2">
-        <Typography variant="h3" className="text-xl md:text-2xl">
-          Technical Inquiry Form
-        </Typography>
-        <Typography variant="caption" muted>
-          Direct channel to AVENQ leadership (contact@avenq.pro).
-        </Typography>
-      </div>
-
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate aria-label="Direct Engineering Inquiry Form">
       {/* Anti-Spam Honeypot Field */}
       <div className="hidden" aria-hidden="true">
         <label htmlFor="website_url_honeypot">Do not fill this field</label>
@@ -144,9 +134,9 @@ export const ContactForm: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
-          label="Your Name"
+          label="Name"
           name="name"
-          placeholder="e.g. Elena Vance"
+          placeholder="Elena Vance"
           value={formData.name}
           onChange={handleChange}
           error={fieldErrors.name}
@@ -156,7 +146,7 @@ export const ContactForm: React.FC = () => {
           label="Work Email"
           name="email"
           type="email"
-          placeholder="elena@company.com"
+          placeholder="elena@organization.com"
           value={formData.email}
           onChange={handleChange}
           error={fieldErrors.email}
@@ -165,9 +155,9 @@ export const ContactForm: React.FC = () => {
       </div>
 
       <Input
-        label="Organization / Company"
+        label="Organization"
         name="organization"
-        placeholder="e.g. Real Estate & Hospitality Enterprise"
+        placeholder="Enterprise / Business Name"
         value={formData.organization}
         onChange={handleChange}
         error={fieldErrors.organization}
@@ -175,9 +165,9 @@ export const ContactForm: React.FC = () => {
       />
 
       <Textarea
-        label="Platform Brief / Specifications"
+        label="Technical Brief"
         name="message"
-        placeholder="Detail your digital business goals, software architecture needs, or platform inquiry..."
+        placeholder="State your software architecture requirements, system scope, or platform goals..."
         value={formData.message}
         onChange={handleChange}
         error={fieldErrors.message}
@@ -191,7 +181,7 @@ export const ContactForm: React.FC = () => {
         className="w-full"
         disabled={status === 'submitting'}
       >
-        {status === 'submitting' ? 'Delivering Inquiry...' : 'Transmit Inquiry'}
+        {status === 'submitting' ? 'Transmitting Brief...' : 'Deliver Technical Brief'}
       </Button>
     </form>
   );

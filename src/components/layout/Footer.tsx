@@ -10,11 +10,11 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 pb-16 border-b border-[var(--border-subtle)]">
           {/* Brand & Positioning Column */}
           <div className="md:col-span-5 flex flex-col gap-4">
-            <Link href="/" className="font-semibold text-lg tracking-[0.15em] text-[var(--text-primary)]">
+            <Link href="/" className="font-semibold text-lg tracking-[0.2em] uppercase text-[var(--text-primary)]">
               AVENQ
             </Link>
-            <Typography variant="body" muted className="max-w-xs">
-              Building Digital Businesses.
+            <Typography variant="body" muted className="max-w-xs leading-relaxed text-sm">
+              Software built to endure. Products, platforms, and technology infrastructure.
             </Typography>
             <div className="mt-4 flex items-center gap-2 text-xs font-mono text-[var(--text-secondary)]">
               <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
@@ -22,10 +22,10 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Products Column */}
+          {/* Platforms & Resources Column */}
           <div className="md:col-span-2 flex flex-col gap-4">
             <Typography variant="mono" className="text-[var(--text-tertiary)]">
-              Products
+              Platforms
             </Typography>
             <ul className="flex flex-col gap-3 text-sm">
               <li>
@@ -36,6 +36,16 @@ export const Footer: React.FC = () => {
               <li>
                 <Link href="/products#qrmenu" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   QR Menu
+                </Link>
+              </li>
+              <li>
+                <Link href="/products" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                  Future Ecosystem
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                  Documentation
                 </Link>
               </li>
             </ul>
@@ -50,6 +60,11 @@ export const Footer: React.FC = () => {
               <li>
                 <Link href="/about" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   About
+                </Link>
+              </li>
+              <li>
+                <Link href="/principles" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                  Principles
                 </Link>
               </li>
               <li>
