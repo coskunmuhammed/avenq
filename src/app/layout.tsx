@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { generateOrganizationSchema } from '@/lib/seo/schema';
+import { generateOrganizationSchema, generateWebSiteSchema } from '@/lib/seo/schema';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -14,48 +14,55 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://avenq.pro'),
   title: {
-    default: 'AVENQ — Building Digital Businesses.',
-    template: '%s | AVENQ',
+    default: 'AVENQ — Technology Company',
+    template: '%s — AVENQ',
   },
   description:
-    'AVENQ is a technology company focused on building software products, AI solutions, cloud infrastructure, automation systems and digital transformation platforms.',
+    'AVENQ is a technology company building software products, business platforms, AI systems, and cloud infrastructure.',
   keywords: [
     'AVENQ',
+    'AVENQ Technology',
     'Technology Company',
-    'Digital Businesses',
     'Satkirala',
     'QR Menu',
+    'Mülkünühesapla',
+    'Kastyörem',
     'Software Engineering',
     'AI Systems',
     'Cloud Infrastructure',
     'Enterprise Operating Systems',
   ],
-  authors: [{ name: 'AVENQ' }],
+  authors: [{ name: 'AVENQ', url: 'https://avenq.pro' }],
   creator: 'AVENQ',
   publisher: 'AVENQ',
+  alternates: {
+    canonical: 'https://avenq.pro',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://avenq.pro',
     siteName: 'AVENQ',
-    title: 'AVENQ — Building Digital Businesses.',
+    title: 'AVENQ — Technology Company',
     description:
-      'We build software, AI systems and digital infrastructure for ambitious companies.',
+      'Software built to endure. We build software products, business platforms, and digital infrastructure.',
     images: [
       {
-        url: '/og-image.png',
+        url: 'https://avenq.pro/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'AVENQ — Building Digital Businesses.',
+        alt: 'AVENQ — Technology Company',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AVENQ — Building Digital Businesses.',
+    title: 'AVENQ — Technology Company',
     description:
-      'We build software, AI systems and digital infrastructure for ambitious companies.',
-    images: ['/og-image.png'],
+      'Software built to endure. We build software products, business platforms, and digital infrastructure.',
+    images: ['https://avenq.pro/og-image.png'],
+    creator: '@avenq',
+    site: '@avenq',
   },
   robots: {
     index: true,
@@ -76,6 +83,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const organizationSchema = generateOrganizationSchema();
+  const webSiteSchema = generateWebSiteSchema();
 
   return (
     <html lang="en" className="dark">
@@ -83,6 +91,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
         />
       </head>
       <body className="antialiased bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col selection:bg-white selection:text-black">

@@ -3,17 +3,44 @@ import { Container } from '@/components/ui/Container';
 import { Typography } from '@/components/ui/Typography';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/Motion';
 import { ProductShowcaseCard } from '@/components/product/ProductShowcaseCard';
-import { generateSoftwareSchema } from '@/lib/seo/schema';
+import {
+  generateCollectionPageSchema,
+  generateBreadcrumbSchema,
+  generateSoftwareSchema,
+} from '@/lib/seo/schema';
 
 export const metadata: Metadata = {
-  title: 'Product Ecosystem & Architecture',
+  title: 'Products — AVENQ',
   description: 'Public products, business solutions, creative engineering, and future platform horizons engineered by AVENQ.',
   alternates: {
     canonical: 'https://avenq.pro/products',
   },
+  openGraph: {
+    title: 'Products — AVENQ',
+    description: 'Public products, business platforms, and software engineering ecosystem.',
+    url: 'https://avenq.pro/products',
+  },
 };
 
 export default function ProductsPage() {
+  const collectionSchema = generateCollectionPageSchema(
+    'Products — AVENQ',
+    'Public products, business platforms, and software engineering ecosystem.',
+    '/products'
+  );
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', item: '/' },
+    { name: 'Products', item: '/products' },
+  ]);
+
+  const softwareSchemas = [
+    generateSoftwareSchema('SATKIRALA', 'Operating system for the Turkish real estate industry.', 'BusinessApplication', 'https://avenq.pro/products#satkirala'),
+    generateSoftwareSchema('MÜLKÜNÜHESAPLA', 'Property valuation and market intelligence platform.', 'FinanceApplication', 'https://avenq.pro/products#mulkunuhesapla'),
+    generateSoftwareSchema('KASTYÖREM', 'Digital commerce platform for regional and local products.', 'ShoppingApplication', 'https://avenq.pro/products#kastyorem'),
+    generateSoftwareSchema('QUIZ OF THE SEAS', 'Interactive hospitality and entertainment experience.', 'EntertainmentApplication', 'https://avenq.pro/products#quizoftheseas'),
+  ];
+
   const publicProducts = [
     {
       id: 'satkirala',
@@ -95,164 +122,181 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-20 md:gap-32 pb-24 pt-12 md:pt-16">
-      {/* Header & Typographic ASCII Diagram */}
-      <section>
-        <Container size="normal" className="flex flex-col gap-8">
-          <FadeIn>
-            <Typography variant="mono" muted className="mb-2">
-              ECOSYSTEM ARCHITECTURE
-            </Typography>
-            <Typography variant="display" className="max-w-4xl tracking-[-0.035em]">
-              Product Ecosystem.
-            </Typography>
-          </FadeIn>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {softwareSchemas.map((schema, idx) => (
+        <script
+          key={idx}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
+      <div className="w-full flex flex-col gap-16 md:gap-32 pb-24 pt-4 md:pt-16">
+        {/* Header & Typographic ASCII Diagram */}
+        <section>
+          <Container size="normal" className="flex flex-col gap-8">
+            <FadeIn>
+              <Typography variant="mono" muted className="mb-2">
+                ECOSYSTEM ARCHITECTURE
+              </Typography>
+              <Typography variant="display" className="max-w-4xl tracking-[-0.035em] text-3xl sm:text-5xl md:text-6xl">
+                Product Ecosystem.
+              </Typography>
+            </FadeIn>
 
-          {/* Typographic Connector Diagram */}
-          <FadeIn delay={0.1}>
-            <div className="p-6 md:p-8 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] font-mono text-xs md:text-sm text-[var(--text-secondary)] leading-relaxed select-none overflow-x-auto">
-              <div className="text-[var(--text-tertiary)] mb-2">// AVENQ ECOSYSTEM STRUCTURE</div>
-              <pre className="text-[var(--text-primary)] font-semibold">
+            {/* Typographic Connector Diagram */}
+            <FadeIn delay={0.1}>
+              <div className="p-4 sm:p-8 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] font-mono text-[11px] sm:text-xs md:text-sm text-[var(--text-secondary)] leading-relaxed select-none overflow-x-auto">
+                <div className="text-[var(--text-tertiary)] mb-2">// AVENQ ECOSYSTEM STRUCTURE</div>
+                <pre className="text-[var(--text-primary)] font-semibold">
 {`                   AVENQ
 
         ├── Public Products
         ├── Business Solutions
         └── Creative & Digital`}
-              </pre>
+                </pre>
+              </div>
+            </FadeIn>
+          </Container>
+        </section>
+
+        {/* 1. Public Products */}
+        <section id="public">
+          <Container size="normal" className="flex flex-col gap-8 md:gap-10">
+            <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-4 md:pb-6">
+              <Typography variant="mono" muted>
+                GROUP 01 // STANDALONE PLATFORMS
+              </Typography>
+              <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">Public Products</Typography>
             </div>
-          </FadeIn>
-        </Container>
-      </section>
 
-      {/* 1. Public Products */}
-      <section id="public">
-        <Container size="normal" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
-            <Typography variant="mono" muted>
-              GROUP 01 // STANDALONE PLATFORMS
-            </Typography>
-            <Typography variant="h2">Public Products</Typography>
-          </div>
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              {publicProducts.map((prod) => (
+                <StaggerItem key={prod.id}>
+                  <ProductShowcaseCard
+                    id={prod.id}
+                    name={prod.name}
+                    sentence={prod.sentence}
+                    philosophy={prod.philosophy}
+                    purpose={prod.purpose}
+                    statusLabel={prod.statusLabel}
+                  />
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </Container>
+        </section>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {publicProducts.map((prod) => (
-              <StaggerItem key={prod.id}>
-                <ProductShowcaseCard
-                  id={prod.id}
-                  name={prod.name}
-                  sentence={prod.sentence}
-                  philosophy={prod.philosophy}
-                  purpose={prod.purpose}
-                  statusLabel={prod.statusLabel}
-                />
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </Container>
-      </section>
+        {/* 2. Business Solutions */}
+        <section id="business">
+          <Container size="normal" className="flex flex-col gap-8 md:gap-10">
+            <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-4 md:pb-6">
+              <Typography variant="mono" muted>
+                GROUP 02 // PLATFORM CAPABILITIES
+              </Typography>
+              <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">Business Solutions</Typography>
+            </div>
 
-      {/* 2. Business Solutions */}
-      <section id="business">
-        <Container size="normal" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
-            <Typography variant="mono" muted>
-              GROUP 02 // PLATFORM CAPABILITIES
-            </Typography>
-            <Typography variant="h2">Business Solutions</Typography>
-          </div>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {businessSolutions.map((sol, idx) => (
-              <StaggerItem key={idx}>
-                <div className="p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] hover:border-[var(--border-medium)] transition-colors flex flex-col justify-between gap-4 h-full">
-                  <div className="flex flex-col gap-2">
-                    <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-widest uppercase">
-                      {sol.tag}
-                    </span>
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">
-                      {sol.title}
-                    </h3>
-                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed mt-1">
-                      {sol.description}
-                    </p>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </Container>
-      </section>
-
-      {/* 3. Creative & Digital */}
-      <section id="creative">
-        <Container size="normal" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
-            <Typography variant="mono" muted>
-              GROUP 03 // CREATIVE ENGINEERING
-            </Typography>
-            <Typography variant="h2">Creative & Digital</Typography>
-          </div>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {creativeDigital.map((item, idx) => (
-              <StaggerItem key={idx}>
-                <div className="p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] hover:border-[var(--border-medium)] transition-colors flex flex-col justify-between gap-4 h-full">
-                  <div className="flex flex-col gap-2">
-                    <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-widest uppercase">
-                      {item.tag}
-                    </span>
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed mt-1">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </Container>
-      </section>
-
-      {/* 4. Future Expansion Horizons */}
-      <section id="future">
-        <Container size="normal" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-6">
-            <Typography variant="mono" muted>
-              FUTURE EXPANSION
-            </Typography>
-            <Typography variant="h2">System Horizons</Typography>
-          </div>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {futureHorizons.map((item, idx) => (
-              <StaggerItem key={idx}>
-                <div className="p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] flex flex-col justify-between gap-6 h-full">
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between gap-2 border-b border-[var(--border-subtle)] pb-3">
-                      <span className="font-mono text-xs text-[var(--text-tertiary)] uppercase tracking-wider">
-                        HORIZON // 0{idx + 1}
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {businessSolutions.map((sol, idx) => (
+                <StaggerItem key={idx}>
+                  <div className="p-5 sm:p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] hover:border-[var(--border-medium)] transition-colors flex flex-col justify-between gap-4 h-full">
+                    <div className="flex flex-col gap-2">
+                      <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-widest uppercase">
+                        {sol.tag}
                       </span>
-                      <span
-                        className={`font-mono text-[11px] px-2 py-0.5 rounded border ${getBadgeStyle(item.status)}`}
-                      >
-                        {item.status}
-                      </span>
+                      <h3 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)] tracking-tight">
+                        {sol.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-secondary)] leading-relaxed mt-1">
+                        {sol.description}
+                      </p>
                     </div>
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                      {item.description}
-                    </p>
                   </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </Container>
-      </section>
-    </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </Container>
+        </section>
+
+        {/* 3. Creative & Digital */}
+        <section id="creative">
+          <Container size="normal" className="flex flex-col gap-8 md:gap-10">
+            <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-4 md:pb-6">
+              <Typography variant="mono" muted>
+                GROUP 03 // CREATIVE ENGINEERING
+              </Typography>
+              <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">Creative & Digital</Typography>
+            </div>
+
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {creativeDigital.map((item, idx) => (
+                <StaggerItem key={idx}>
+                  <div className="p-5 sm:p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] hover:border-[var(--border-medium)] transition-colors flex flex-col justify-between gap-4 h-full">
+                    <div className="flex flex-col gap-2">
+                      <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-widest uppercase">
+                        {item.tag}
+                      </span>
+                      <h3 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)] tracking-tight">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-secondary)] leading-relaxed mt-1">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </Container>
+        </section>
+
+        {/* 4. Future Expansion Horizons */}
+        <section id="future">
+          <Container size="normal" className="flex flex-col gap-8 md:gap-10">
+            <div className="flex flex-col gap-2 border-b border-[var(--border-subtle)] pb-4 md:pb-6">
+              <Typography variant="mono" muted>
+                FUTURE EXPANSION
+              </Typography>
+              <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">System Horizons</Typography>
+            </div>
+
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {futureHorizons.map((item, idx) => (
+                <StaggerItem key={idx}>
+                  <div className="p-5 sm:p-6 rounded-[4px] border border-[var(--border-subtle)] bg-[#141414] flex flex-col justify-between gap-4 sm:gap-6 h-full">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between gap-2 border-b border-[var(--border-subtle)] pb-3">
+                        <span className="font-mono text-[10px] sm:text-xs text-[var(--text-tertiary)] uppercase tracking-wider">
+                          HORIZON // 0{idx + 1}
+                        </span>
+                        <span
+                          className={`font-mono text-[10px] sm:text-[11px] px-2 py-0.5 rounded border ${getBadgeStyle(item.status)}`}
+                        >
+                          {item.status}
+                        </span>
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)] tracking-tight">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </Container>
+        </section>
+      </div>
+    </>
   );
 }
