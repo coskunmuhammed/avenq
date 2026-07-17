@@ -45,14 +45,16 @@ interface InquiryPayload {
   ipAddress: string;
 }
 
-async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered: boolean; messageId?: string; error?: string }> {
+async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered: boolean; messageId?: string; error?: string; provider?: string }> {
   const resendApiKey = process.env.RESEND_API_KEY;
   const webhookUrl = process.env.CONTACT_WEBHOOK_URL;
 
-  // 1. Resend Production Integration
+  // 1. Resend API Integration
   if (resendApiKey) {
     try {
-      // Send Inbound Notification to contact@avenq.pro
+      // First try sending from official domain
+      let senderEmail = process.env.RESEND_FROM_EMAIL || 'AVENQ Contact <onboarding@resend.dev>';
+      
       const inboundRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -60,64 +62,69 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'AVENQ Contact System <inquiry@avenq.pro>',
+          from: senderEmail,
           to: ['contact@avenq.pro'],
           reply_to: payload.email,
           subject: `New Engineering Inquiry — ${payload.name}`,
           html: `
-            <h2>New Engineering Inquiry Received</h2>
-            <p><strong>Name:</strong> ${payload.name}</p>
-            <p><strong>Work Email:</strong> ${payload.email}</p>
-            <p><strong>Organization:</strong> ${payload.organization}</p>
-            <p><strong>Submission Timestamp:</strong> ${payload.submittedAt}</p>
-            <p><strong>Origin URL:</strong> ${payload.originUrl}</p>
-            <p><strong>User Agent:</strong> ${payload.userAgent}</p>
-            <p><strong>IP Address:</strong> ${payload.ipAddress}</p>
-            <hr />
-            <h3>Technical Brief:</h3>
-            <p style="white-space: pre-wrap;">${payload.message}</p>
+            <div style="font-family: monospace, sans-serif; background-color: #0b0b0b; color: #ffffff; padding: 24px; border-radius: 6px;">
+              <h2 style="border-bottom: 1px solid #333; padding-bottom: 12px; color: #ffffff;">New Engineering Inquiry Received</h2>
+              <p><strong>Name:</strong> ${payload.name}</p>
+              <p><strong>Work Email:</strong> <a href="mailto:${payload.email}" style="color: #60a5fa;">${payload.email}</a></p>
+              <p><strong>Organization:</strong> ${payload.organization}</p>
+              <p><strong>Submission Timestamp:</strong> ${payload.submittedAt}</p>
+              <p><strong>Origin URL:</strong> ${payload.originUrl}</p>
+              <p><strong>IP Address:</strong> ${payload.ipAddress}</p>
+              <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;" />
+              <h3 style="color: #ffffff;">Technical Brief:</h3>
+              <div style="background-color: #141414; padding: 16px; border-radius: 4px; white-space: pre-wrap; color: #e5e7eb; border: 1px solid #262626;">${payload.message}</div>
+            </div>
           `,
         }),
       });
 
-      if (!inboundRes.ok) {
+      if (inboundRes.ok) {
+        const resData = await inboundRes.json();
+        
+        // Auto-reply to sender
+        try {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${resendApiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: senderEmail,
+              to: [payload.email],
+              subject: "We've received your engineering inquiry.",
+              html: `
+                <div style="font-family: sans-serif; color: #111827; max-width: 600px; padding: 24px;">
+                  <p>Hello ${payload.name},</p>
+                  <p>Thank you for reaching out to AVENQ.</p>
+                  <p>We have received your engineering inquiry regarding <strong>${payload.organization}</strong>. Our leadership and engineering team will review your technical brief and respond directly within 24 hours.</p>
+                  <br />
+                  <p>Best regards,<br /><strong>AVENQ Engineering</strong><br /><a href="https://avenq.pro">https://avenq.pro</a></p>
+                </div>
+              `,
+            }),
+          });
+        } catch (confirmErr) {
+          console.warn('[AVENQ Confirmation Email Warning]:', confirmErr);
+        }
+
+        return { delivered: true, messageId: resData.id, provider: 'Resend' };
+      } else {
         const errText = await inboundRes.text();
-        return { delivered: false, error: `Resend API Inbound HTTP ${inboundRes.status}: ${errText}` };
+        console.error('[Resend Error Response]:', errText);
+        return { delivered: false, error: `Resend HTTP ${inboundRes.status}: ${errText}` };
       }
-
-      const resData = await inboundRes.json();
-
-      // Send Automatic Confirmation Email to Sender
-      try {
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${resendApiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: 'AVENQ Engineering <contact@avenq.pro>',
-            to: [payload.email],
-            subject: "We've received your engineering inquiry.",
-            html: `
-              <p>Thank you for contacting AVENQ.</p>
-              <p>We have received your engineering inquiry. Our leadership and engineering team will review your technical brief and respond directly within 24 hours.</p>
-              <br />
-              <p>— AVENQ Engineering<br /><a href="https://avenq.pro">https://avenq.pro</a></p>
-            `,
-          }),
-        });
-      } catch (confirmErr) {
-        console.warn('[AVENQ Confirmation Email Warning]:', confirmErr);
-      }
-
-      return { delivered: true, messageId: resData.id };
     } catch (err: any) {
       return { delivered: false, error: err.message || 'Resend network failure' };
     }
   }
 
-  // 2. Webhook Integration (e.g. Zapier, Slack, Discord, Enterprise Hub)
+  // 2. Webhook Integration (e.g. Zapier, Make, Formspree, Slack, Discord)
   if (webhookUrl) {
     try {
       const res = await fetch(webhookUrl, {
@@ -136,27 +143,23 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
         return { delivered: false, error: `Webhook HTTP ${res.status}` };
       }
 
-      return { delivered: true, messageId: 'webhook-success' };
+      return { delivered: true, messageId: 'webhook-success', provider: 'Webhook' };
     } catch (err: any) {
       return { delivered: false, error: err.message || 'Webhook dispatch failure' };
     }
   }
 
-  // 3. Built-in Production Datastore & Console Fallback
-  console.log('[AVENQ Inbound Inquiry Payload]:', {
-    to: 'contact@avenq.pro',
-    subject: `New Engineering Inquiry — ${payload.name}`,
-    replyTo: payload.email,
-    payload,
-  });
+  // 3. Unconfigured Environment Warning
+  console.warn(
+    '[AVENQ CONTACT NOTICE]: No RESEND_API_KEY or CONTACT_WEBHOOK_URL environment variable set on Vercel. Form payload logged below:'
+  );
+  console.log('[Inbound Payload]:', payload);
 
-  console.log('[AVENQ Automatic Sender Confirmation]:', {
-    to: payload.email,
-    subject: "We've received your engineering inquiry.",
-    body: 'Thank you for contacting AVENQ. We have received your engineering inquiry. Our leadership and engineering team will review your technical brief and respond directly within 24 hours.',
-  });
-
-  return { delivered: true, messageId: `local-delivery-${Date.now()}` };
+  return {
+    delivered: false,
+    error: 'Server email service not configured. Please set RESEND_API_KEY or CONTACT_WEBHOOK_URL in Vercel Environment Variables.',
+    provider: 'None',
+  };
 }
 
 export async function POST(request: Request) {
@@ -233,13 +236,11 @@ export async function POST(request: Request) {
     const delivery = await deliverEmailToInbox(payload);
 
     if (!delivery.delivered) {
-      console.error('[AVENQ Contact Delivery Failed]:', delivery.error);
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to deliver inquiry to contact@avenq.pro. Direct email is available.',
+          error: delivery.error || 'Failed to deliver inquiry to contact@avenq.pro. Direct email is available.',
           code: 'DELIVERY_FAILED',
-          details: delivery.error,
         },
         { status: 500 }
       );
@@ -250,6 +251,7 @@ export async function POST(request: Request) {
         success: true,
         message: 'Inquiry successfully delivered to contact@avenq.pro.',
         messageId: delivery.messageId,
+        provider: delivery.provider,
       },
       { status: 200 }
     );
