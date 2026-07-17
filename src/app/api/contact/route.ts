@@ -61,7 +61,7 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
     }
 
     try {
-      const senderEmail = process.env.BREVO_SENDER_EMAIL || 'contact@avenq.pro';
+      const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.CONTACT_RECIPIENT_EMAIL || 'contact@avenq.pro';
       const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL || 'contact@avenq.pro';
 
       const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -131,7 +131,7 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
         if (brevoRes.status === 401) {
           return {
             delivered: false,
-            error: 'Brevo HTTP 401 Unauthorized: Invalid API Key. Please verify key from Brevo Dashboard -> API Keys (starts with xkeysib-).',
+            error: 'Brevo HTTP 401: Invalid API Key or Brevo sender email unverified. Ensure key is from Brevo -> API Keys (starts with xkeysib-). Set BREVO_SENDER_EMAIL in Vercel to your registered Brevo account email.',
           };
         }
         return { delivered: false, error: `Brevo HTTP ${brevoRes.status}: ${errText}` };
