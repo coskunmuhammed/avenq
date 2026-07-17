@@ -46,14 +46,92 @@ interface InquiryPayload {
 }
 
 async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered: boolean; messageId?: string; error?: string; provider?: string }> {
+  const brevoApiKey = process.env.BREVO_API_KEY;
   const resendApiKey = process.env.RESEND_API_KEY;
   const webhookUrl = process.env.CONTACT_WEBHOOK_URL;
 
-  // 1. Resend API Integration
+  // 1. Brevo (Sendinblue) API Integration
+  if (brevoApiKey) {
+    try {
+      const senderEmail = process.env.BREVO_SENDER_EMAIL || 'contact@avenq.pro';
+      const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL || 'contact@avenq.pro';
+
+      const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': brevoApiKey,
+          accept: 'application/json',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          sender: { name: 'AVENQ Contact System', email: senderEmail },
+          to: [{ email: recipientEmail, name: 'AVENQ Leadership' }],
+          replyTo: { email: payload.email, name: payload.name },
+          subject: `New Engineering Inquiry — ${payload.name}`,
+          htmlContent: `
+            <div style="font-family: monospace, sans-serif; background-color: #0b0b0b; color: #ffffff; padding: 24px; border-radius: 6px;">
+              <h2 style="border-bottom: 1px solid #333; padding-bottom: 12px; color: #ffffff;">New Engineering Inquiry Received</h2>
+              <p><strong>Name:</strong> ${payload.name}</p>
+              <p><strong>Work Email:</strong> <a href="mailto:${payload.email}" style="color: #60a5fa;">${payload.email}</a></p>
+              <p><strong>Organization:</strong> ${payload.organization}</p>
+              <p><strong>Submission Timestamp:</strong> ${payload.submittedAt}</p>
+              <p><strong>Origin URL:</strong> ${payload.originUrl}</p>
+              <p><strong>IP Address:</strong> ${payload.ipAddress}</p>
+              <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;" />
+              <h3 style="color: #ffffff;">Technical Brief:</h3>
+              <div style="background-color: #141414; padding: 16px; border-radius: 4px; white-space: pre-wrap; color: #e5e7eb; border: 1px solid #262626;">${payload.message}</div>
+            </div>
+          `,
+        }),
+      });
+
+      if (brevoRes.ok) {
+        const brevoData = await brevoRes.json();
+
+        // Send confirmation email to sender
+        try {
+          await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+              'api-key': brevoApiKey,
+              accept: 'application/json',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              sender: { name: 'AVENQ Engineering', email: senderEmail },
+              to: [{ email: payload.email, name: payload.name }],
+              subject: "We've received your engineering inquiry.",
+              htmlContent: `
+                <div style="font-family: sans-serif; color: #111827; max-width: 600px; padding: 24px;">
+                  <p>Hello ${payload.name},</p>
+                  <p>Thank you for reaching out to AVENQ.</p>
+                  <p>We have received your engineering inquiry regarding <strong>${payload.organization}</strong>. Our leadership and engineering team will review your technical brief and respond directly within 24 hours.</p>
+                  <br />
+                  <p>Best regards,<br /><strong>AVENQ Engineering</strong><br /><a href="https://avenq.pro">https://avenq.pro</a></p>
+                </div>
+              `,
+            }),
+          });
+        } catch (confirmErr) {
+          console.warn('[Brevo Confirmation Warning]:', confirmErr);
+        }
+
+        return { delivered: true, messageId: brevoData.messageId || 'brevo-success', provider: 'Brevo' };
+      } else {
+        const errText = await brevoRes.text();
+        console.error('[Brevo Error Response]:', errText);
+        return { delivered: false, error: `Brevo HTTP ${brevoRes.status}: ${errText}` };
+      }
+    } catch (err: any) {
+      return { delivered: false, error: err.message || 'Brevo API network failure' };
+    }
+  }
+
+  // 2. Resend API Integration
   if (resendApiKey) {
     try {
-      // First try sending from official domain
-      let senderEmail = process.env.RESEND_FROM_EMAIL || 'AVENQ Contact <onboarding@resend.dev>';
+      const senderEmail = process.env.RESEND_FROM_EMAIL || 'AVENQ Contact <onboarding@resend.dev>';
+      const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL || 'contact@avenq.pro';
       
       const inboundRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -63,7 +141,7 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
         },
         body: JSON.stringify({
           from: senderEmail,
-          to: ['contact@avenq.pro'],
+          to: [recipientEmail],
           reply_to: payload.email,
           subject: `New Engineering Inquiry — ${payload.name}`,
           html: `
@@ -86,7 +164,6 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
       if (inboundRes.ok) {
         const resData = await inboundRes.json();
         
-        // Auto-reply to sender
         try {
           await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -124,7 +201,7 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
     }
   }
 
-  // 2. Webhook Integration (e.g. Zapier, Make, Formspree, Slack, Discord)
+  // 3. Webhook Integration
   if (webhookUrl) {
     try {
       const res = await fetch(webhookUrl, {
@@ -149,15 +226,15 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
     }
   }
 
-  // 3. Unconfigured Environment Warning
+  // 4. Unconfigured Environment Warning
   console.warn(
-    '[AVENQ CONTACT NOTICE]: No RESEND_API_KEY or CONTACT_WEBHOOK_URL environment variable set on Vercel. Form payload logged below:'
+    '[AVENQ CONTACT NOTICE]: No BREVO_API_KEY, RESEND_API_KEY, or CONTACT_WEBHOOK_URL set on Vercel. Form payload logged below:'
   );
   console.log('[Inbound Payload]:', payload);
 
   return {
     delivered: false,
-    error: 'Server email service not configured. Please set RESEND_API_KEY or CONTACT_WEBHOOK_URL in Vercel Environment Variables.',
+    error: 'Server email service not configured. Please set BREVO_API_KEY or RESEND_API_KEY in Vercel Environment Variables.',
     provider: 'None',
   };
 }
