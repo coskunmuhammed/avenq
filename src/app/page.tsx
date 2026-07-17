@@ -311,21 +311,10 @@ export default function HomePage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Follow AVENQ on Instagram @avenq.pro"
-                    className="px-4 py-2.5 rounded-[4px] border border-[var(--border-subtle)] bg-[#0B0B0B] hover:border-[var(--text-primary)] transition-colors flex items-center gap-2 text-sm"
+                    className="px-5 py-3 rounded-[4px] border border-[var(--border-subtle)] bg-[#0B0B0B] hover:border-[var(--text-primary)] transition-colors flex items-center gap-2.5 text-sm"
                   >
                     <span className="font-semibold text-[var(--text-primary)]">Instagram</span>
                     <span className="font-mono text-xs text-[var(--text-tertiary)]">@avenq.pro</span>
-                  </a>
-
-                  <a
-                    href="https://github.com/coskunmuhammed/avenq"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Follow AVENQ on GitHub"
-                    className="px-4 py-2.5 rounded-[4px] border border-[var(--border-subtle)] bg-[#0B0B0B] hover:border-[var(--text-primary)] transition-colors flex items-center gap-2 text-sm"
-                  >
-                    <span className="font-semibold text-[var(--text-primary)]">GitHub</span>
-                    <span className="font-mono text-xs text-[var(--text-tertiary)]">AVENQ</span>
                   </a>
                 </div>
               </div>

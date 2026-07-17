@@ -26,7 +26,6 @@ export function generateOrganizationSchema() {
     email: 'contact@avenq.pro',
     sameAs: [
       'https://instagram.com/avenq.pro',
-      'https://github.com/coskunmuhammed/avenq',
     ],
     knowsAbout: [
       'Software Engineering',

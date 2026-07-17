@@ -80,7 +80,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Connect Column (Verified Profiles Only) */}
+          {/* Connect Column (Verified Public Profiles Only) */}
           <div className="md:col-span-3 flex flex-col gap-4">
             <Typography variant="mono" className="text-[var(--text-tertiary)]">
               Connect
@@ -96,18 +96,6 @@ export const Footer: React.FC = () => {
                 >
                   <span>Instagram</span>
                   <span className="font-mono text-xs text-[var(--text-tertiary)]">@avenq.pro</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/coskunmuhammed/avenq"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="AVENQ on GitHub"
-                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors inline-flex items-center gap-1.5"
-                >
-                  <span>GitHub</span>
-                  <span className="font-mono text-xs text-[var(--text-tertiary)]">AVENQ</span>
                 </a>
               </li>
               <li>
