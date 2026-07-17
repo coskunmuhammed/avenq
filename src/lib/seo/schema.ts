@@ -25,10 +25,8 @@ export function generateOrganizationSchema() {
     slogan: 'Software built to endure.',
     email: 'contact@avenq.pro',
     sameAs: [
+      'https://instagram.com/avenq.pro',
       'https://github.com/coskunmuhammed/avenq',
-      'https://linkedin.com/company/avenq',
-      'https://x.com/avenq',
-      'https://instagram.com/avenq',
     ],
     knowsAbout: [
       'Software Engineering',

@@ -290,7 +290,50 @@ export default function HomePage() {
           </Container>
         </section>
 
-        {/* 7. Direct Engineering Contact */}
+        {/* 7. Homepage Social Presence Section */}
+        <section className="py-12 md:py-20 border-y border-[var(--border-subtle)] bg-[#141414]">
+          <Container size="narrow">
+            <FadeIn>
+              <div className="flex flex-col gap-6">
+                <Typography variant="mono" muted>
+                  BRAND JOURNEY
+                </Typography>
+                <Typography variant="h2" className="text-2xl sm:text-3xl md:text-4xl">
+                  Follow Our Journey
+                </Typography>
+                <Typography variant="body" muted className="text-base leading-relaxed">
+                  Engineering notes, product updates and company progress.
+                </Typography>
+
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <a
+                    href="https://instagram.com/avenq.pro"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Follow AVENQ on Instagram @avenq.pro"
+                    className="px-4 py-2.5 rounded-[4px] border border-[var(--border-subtle)] bg-[#0B0B0B] hover:border-[var(--text-primary)] transition-colors flex items-center gap-2 text-sm"
+                  >
+                    <span className="font-semibold text-[var(--text-primary)]">Instagram</span>
+                    <span className="font-mono text-xs text-[var(--text-tertiary)]">@avenq.pro</span>
+                  </a>
+
+                  <a
+                    href="https://github.com/coskunmuhammed/avenq"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Follow AVENQ on GitHub"
+                    className="px-4 py-2.5 rounded-[4px] border border-[var(--border-subtle)] bg-[#0B0B0B] hover:border-[var(--text-primary)] transition-colors flex items-center gap-2 text-sm"
+                  >
+                    <span className="font-semibold text-[var(--text-primary)]">GitHub</span>
+                    <span className="font-mono text-xs text-[var(--text-tertiary)]">AVENQ</span>
+                  </a>
+                </div>
+              </div>
+            </FadeIn>
+          </Container>
+        </section>
+
+        {/* 8. Direct Engineering Contact */}
         <section>
           <Container size="normal">
             <div className="border border-[var(--border-medium)] rounded-[6px] p-6 sm:p-8 md:p-14 bg-[#141414] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8">
