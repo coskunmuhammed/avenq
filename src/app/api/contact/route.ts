@@ -46,12 +46,20 @@ interface InquiryPayload {
 }
 
 async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered: boolean; messageId?: string; error?: string; provider?: string }> {
-  const brevoApiKey = process.env.BREVO_API_KEY;
-  const resendApiKey = process.env.RESEND_API_KEY;
-  const webhookUrl = process.env.CONTACT_WEBHOOK_URL;
+  const brevoApiKey = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.trim().replace(/^["']|["']$/g, '') : null;
+  const resendApiKey = process.env.RESEND_API_KEY ? process.env.RESEND_API_KEY.trim().replace(/^["']|["']$/g, '') : null;
+  const webhookUrl = process.env.CONTACT_WEBHOOK_URL ? process.env.CONTACT_WEBHOOK_URL.trim() : null;
 
   // 1. Brevo (Sendinblue) API Integration
   if (brevoApiKey) {
+    // Check if user accidentally provided an SMTP Key instead of v3 API Key
+    if (brevoApiKey.startsWith('xsmtpsib-')) {
+      return {
+        delivered: false,
+        error: 'Brevo Key Error: An SMTP Key (xsmtpsib-...) was provided. Please use an API v3 Key (starts with xkeysib-...) from Brevo Dashboard -> API Keys tab.',
+      };
+    }
+
     try {
       const senderEmail = process.env.BREVO_SENDER_EMAIL || 'contact@avenq.pro';
       const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL || 'contact@avenq.pro';
@@ -120,6 +128,12 @@ async function deliverEmailToInbox(payload: InquiryPayload): Promise<{ delivered
       } else {
         const errText = await brevoRes.text();
         console.error('[Brevo Error Response]:', errText);
+        if (brevoRes.status === 401) {
+          return {
+            delivered: false,
+            error: 'Brevo HTTP 401 Unauthorized: Invalid API Key. Please verify key from Brevo Dashboard -> API Keys (starts with xkeysib-).',
+          };
+        }
         return { delivered: false, error: `Brevo HTTP ${brevoRes.status}: ${errText}` };
       }
     } catch (err: any) {
